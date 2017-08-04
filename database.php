@@ -24,28 +24,35 @@ class database {
 	const DBNAME = "InventoryManagement";
 	protected $connection;
 	protected $con;
-	public function check_database(){
 	
+	public function check_database(){
 		
 		$conn = $this->create_connection();
 		if($conn){
 			$return1 = $this->create_database();
 			echo json_encode($return1);
-			
-			
-			
 		}
 		
 			
 	}
             
 	public function create_connection(){
-                
+        
+
     	// start of function create_connection
-       	$servername = "localhost";
-		$username = "root";
-		$password = "";
-		// Create connection
+       	
+
+		$json = json_decode(file_get_contents("credentials/info.json"), true);
+
+		$servername = $json[0]["localhost"];
+		$username = $json[0]["username"];
+		$password = $json[0]["password"];
+
+
+
+
+
+		// Create connection		
 		$conn = new mysqli($servername, $username, $password);
 		// Check connection
 		if ($conn->connect_error) {
@@ -65,6 +72,14 @@ class database {
 		$username = "root";
 		$password = "";
 		$dbname = "inventory";
+
+		$json = json_decode(file_get_contents("credentials/info.json"), true);
+
+		$servername = $json[0]["localhost"];
+		$username = $json[0]["username"];
+		$password = $json[0]["password"];
+		$dbname = $json[0]["database"];
+
 		// Create connection
 		$conn = new mysqli($servername, $username, $password, $dbname);
 		// Check connection
