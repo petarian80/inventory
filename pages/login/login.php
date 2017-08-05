@@ -4,10 +4,17 @@ include_once('../../globals/database.php');
 
 if(isset($_POST['action'])) {
     
+	$loginClass = new loginphp();
+
 	if($_POST['action'] == "doLogin"){
-		$loginClass = new loginphp();
 		$loginClass->doLogin($_POST['data']);
 	}
+
+	if($_POST['action'] == "isLogin"){
+		$loginClass->isLogin($_POST['data']);
+	}
+
+
 	
 	
 	
@@ -18,21 +25,15 @@ if(isset($_POST['action'])) {
 
 class loginphp{
 
-	
+	public function isLogin($data){
 
-	public function doLogin($data){
-
-		session_start();
-
-		$params = array();
-		$return = array();
-    	parse_str($data, $params);
-
-		$username = $params['username'];
-		$password = $params['password'];
-
-		$sql  = sprintf("SELECT username,password FROM login WHERE username ='%s' AND password='%s' LIMIT 1", $username, $password);
 		global $db;
+		session_start();		
+		$return = array();
+    	
+		$username = $_SESSION['login_user'];
+		$sql  = sprintf("SELECT username FROM login WHERE username ='%s' LIMIT 1", $username);
+		
 		$result = $db->query($sql);
 		$arr = $db->fetch_array($result);
 		
@@ -42,6 +43,48 @@ class loginphp{
 			
 			$_SESSION['login_user'] = $username;
 			
+			$return = array(
+				'success' => true,
+				'message' => $username . " Already Logged In"	
+			);
+		}else {
+
+			$return = array(
+				'success' => false,
+				'message' => "Your Login Session is invalid"	
+			);
+			
+		}
+
+
+		
+			
+		echo json_encode($return);
+	}
+	
+
+	public function doLogin($data){
+
+		global $db;
+		session_start();
+		$params = array();
+		$return = array();
+    	parse_str($data, $params);
+
+		$username = $params['username'];
+		$password = $params['password'];
+
+		$sql  = sprintf("SELECT username,password FROM login WHERE username ='%s' AND password='%s' LIMIT 1", $username, $password);
+		
+		$result = $db->query($sql);
+		$arr = $db->fetch_array($result);
+		
+		$count = $db->num_rows($result);
+
+		if($count == 1) {
+			
+			$_SESSION['login_user'] = $username;
+
 			$return = array(
 				'success' => true,
 				'message' => "Login Successful"	

@@ -1,3 +1,37 @@
+
+function isLoggedin(){
+
+    
+
+        $('#error').html('');
+
+        $.ajax({
+            type: 'post',
+            url: 'login.php',
+            data: {action: "isLogin", data: null},
+            success: function (data) {
+
+                var obj = jQuery.parseJSON(data);
+                console.log(obj);
+                if(obj['success']){
+                    $('#error').html(obj['message'])
+                }else{
+                    $('#error').html(obj['message'])
+                }
+
+                console.log('Submission was successful.');
+                console.log(data);
+            },
+            error: function (data) {
+                console.log('An error occurred.');
+                console.log(data);
+            },
+        });
+
+    
+
+}
+
 $(function() {
 
     // get login form data and send it to php and get response back
@@ -33,9 +67,5 @@ $(function() {
 
         return false;
     });
-
-
-
-
 
 });
